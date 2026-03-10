@@ -278,12 +278,15 @@ void LangScheduler::print_decode_summary() {
         spdlog::info("No completed decode requests recorded.");
         return;
     }
+    const double cycles_per_sec = static_cast<double>(_config.core_freq) * 1e6;
     for (const auto& stat : _decode_stats) {
-        spdlog::info("Request {}: decode tokens={}, decode cycles={}, throughput={:.6f} tok/cycle",
-                     stat.request_id,
-                     stat.decode_tokens,
-                     stat.decode_cycles,
-                     stat.tok_per_cycle);
-        
+        double tok_per_sec = stat.tok_per_cycle * cycles_per_sec;
+        spdlog::info(
+                "Request {}: decode tokens={}, decode cycles={}, throughput={:.6f} tok/cycle ({:.2f} tok/s)",
+                stat.request_id,
+                stat.decode_tokens,
+                stat.decode_cycles,
+                stat.tok_per_cycle,
+                tok_per_sec);
     }
 }

@@ -10,6 +10,6 @@ class IterLevelScheduler : public LangScheduler {
                        SimulationConfig config,
                        json scheduler_config);
     virtual void cycle() override;
-};ß
+};
 
 #endif

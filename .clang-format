@@ -1,0 +1,64 @@
+# .clang-format (K&R braces)
+
+BasedOnStyle: Google
+Language: Cpp
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+ContinuationIndentWidth: 8
+
+# K&R / attach braces
+BreakBeforeBraces: Attach
+
+IndentCaseLabels: true
+IndentCaseBlocks: false
+
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+AlignEscapedNewlines: Left
+AlignTrailingComments: true
+
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerIndentWidth: 4
+
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceInEmptyParentheses: false
+SpaceBeforeAssignmentOperators: true
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+DerivePointerAlignment: false
+
+SortIncludes: true
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '^<.*>'
+    Priority: 1
+  - Regex: '^".*"'
+    Priority: 2
+
+ReflowComments: true
+Cpp11BracedListStyle: true
+Standard: c++20
+FixNamespaceComments: true
+NamespaceIndentation: All
+
+StatementMacros:
+  - Q_UNUSED
+  - CHECK
+  - DCHECK
+ForEachMacros:
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH

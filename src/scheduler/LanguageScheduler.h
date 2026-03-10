@@ -15,6 +15,11 @@ struct LangRequest {
     uint32_t prompt_length;
     uint32_t current_length;
     uint32_t target_length;
+
+    uint32_t decode_target_tokens = 0;  //! csld: record the total decode tokens generated
+    uint64_t first_token_cycle = 0;     //! csld: record the cycle when the first token is generated
+    bool first_token_recorded = false;  //! csld: whether the first token generation cycle has been recorded
+
     std::vector<std::unique_ptr<Tensor>> key_cache;
     std::vector<std::unique_ptr<Tensor>> value_cache;
 };

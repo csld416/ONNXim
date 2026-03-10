@@ -97,6 +97,7 @@ void LangScheduler::finish_model(uint32_t model_id) {
             uint32_t promtp_len = _active_requests[req_id]->prompt_length;
             _active_requests[req_id]->gen_phase = true;
             _active_requests[req_id]->current_length += promtp_len + 1;
+            //! csld: this request just finished prefill phase, and now for decode mode.
         } else {
             _active_requests[req_id]->current_length += 1;
         }
@@ -160,6 +161,7 @@ void LangScheduler::parse_request_trace(std::string path) {
         request->start_time = 0;
         request->running = false;
         request->prompt_length = std::stoi(prompt_length);
+        request->decode_target_tokens = std::stoi(target_length); //! csld: record the original target tokens from the trace file, which is used for calculating the average decoding latency per token
         request->target_length =
                 std::stoi(cached_len) + std::stoi(prompt_length) + std::stoi(target_length);
         request->current_length = std::stoi(cached_len);

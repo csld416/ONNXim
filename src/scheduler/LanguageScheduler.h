@@ -4,6 +4,12 @@
 
 #include "../Common.h"
 #include "../models/LanguageModel.h"
+struct DecodeStat {
+    uint32_t request_id = 0;
+    uint64_t decode_tokens = 0;
+    uint64_t decode_cycles = 0;
+    double tok_per_cycle = 0.0;
+};
 
 struct LangRequest {
     uint32_t request_id;
@@ -18,7 +24,8 @@ struct LangRequest {
 
     uint32_t decode_target_tokens = 0;  //! csld: record the total decode tokens generated
     uint64_t first_token_cycle = 0;     //! csld: record the cycle when the first token is generated
-    bool first_token_recorded = false;  //! csld: whether the first token generation cycle has been recorded
+    bool first_token_recorded =
+            false;  //! csld: whether the first token generation cycle has been recorded
 
     std::vector<std::unique_ptr<Tensor>> key_cache;
     std::vector<std::unique_ptr<Tensor>> value_cache;
@@ -42,6 +49,7 @@ class LangScheduler {
     virtual void cycle();
     virtual bool busy();
     virtual uint64_t get_kv_memory_size();
+    void print_decode_summary(); //!csld: dont know if this should be virtual, kee monitoring.
 
    protected:
     SimulationConfig _config;
@@ -66,6 +74,7 @@ class LangScheduler {
     bool _check_mem_size;
 
     std::vector<uint32_t> _max_dims;
+    std::vector<DecodeStat> _decode_stats; //! moved from request to scheduler
 
     void parse_request_trace(std::string trace_path);
     void init_request(std::unique_ptr<LangRequest>& request);

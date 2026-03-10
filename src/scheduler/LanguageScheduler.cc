@@ -132,6 +132,7 @@ void LangScheduler::finish_model(uint32_t model_id) {
                     decode_tokens,
                     decode_cycles,
                     tok_per_cycle);
+            _decode_stats.push_back({req_id, decode_tokens, decode_cycles, tok_per_cycle});
             _active_requests.erase(req_id);
             /*
             ? this part is the original code.
@@ -279,5 +280,21 @@ void LangScheduler::init_inputs_and_model() {
                              _config.dram_size);
             }
         }
+    }
+}
+
+void LangScheduler::print_decode_summary() {
+    spdlog::info("Decode Summary for model {}:", _name);
+    if (_decode_stats.empty()) {
+        spdlog::info("No completed decode requests recorded.");
+        return;
+    }
+    for (const auto& stat : _decode_stats) {
+        spdlog::info("Request {}: decode tokens={}, decode cycles={}, throughput={:.6f} tok/cycle",
+                     stat.request_id,
+                     stat.decode_tokens,
+                     stat.decode_cycles,
+                     stat.tok_per_cycle);
+        
     }
 }

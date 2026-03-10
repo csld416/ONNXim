@@ -98,6 +98,13 @@ void LangScheduler::finish_model(uint32_t model_id) {
             _active_requests[req_id]->gen_phase = true;
             _active_requests[req_id]->current_length += promtp_len + 1;
             //! csld: this request just finished prefill phase, and now for decode mode.
+            /*
+            ! when the first token is generated, record the current cycle
+            */
+            if (!_active_requests[req_id]->first_token_recorded) {
+                _active_requests[req_id]->first_token_recorded = true;
+                _active_requests[req_id]->first_token_cycle = _cycle;
+            }
         } else {
             _active_requests[req_id]->current_length += 1;
         }
@@ -109,11 +116,32 @@ void LangScheduler::finish_model(uint32_t model_id) {
         _active_requests[req_id]->running = false;
         if (_active_requests[req_id]->current_length >= _active_requests[req_id]->target_length) {
             _active_requests[req_id]->finish_time = _cycle;
+            auto& req = _active_requests[req_id];
+            uint64_t decode_tokens =
+                    (req->decode_target_tokens > 1) ? (req->decode_target_tokens - 1) : 0;
+            uint64_t decode_cycles = (req->finish_time > req->first_token_cycle)
+                                             ? (req->finish_time - req->first_token_cycle)
+                                             : 0;
+            double tok_per_cycle =
+                    (decode_cycles > 0) ? static_cast<double>(decode_tokens) / decode_cycles : 0.0;
+            spdlog::info(
+                    "Request {} completed in {} cycles (decode: {} tokens / {} cycles = {:.6f} "
+                    "tok/cycle)",
+                    req_id,
+                    req->finish_time - req->start_time,
+                    decode_tokens,
+                    decode_cycles,
+                    tok_per_cycle);
+            _active_requests.erase(req_id);
+            /*
+            ? this part is the original code.
+            _active_requests[req_id]->finish_time = _cycle;
             spdlog::info(
                     "Request {} completed in {} cycles",
                     req_id,
                     _active_requests[req_id]->finish_time - _active_requests[req_id]->start_time);
             _active_requests.erase(req_id);
+            */
         }
     }
     _requests_in_model.erase(model_id);
@@ -161,7 +189,10 @@ void LangScheduler::parse_request_trace(std::string path) {
         request->start_time = 0;
         request->running = false;
         request->prompt_length = std::stoi(prompt_length);
-        request->decode_target_tokens = std::stoi(target_length); //! csld: record the original target tokens from the trace file, which is used for calculating the average decoding latency per token
+        request->decode_target_tokens =
+                std::stoi(target_length);  //! csld: record the original target tokens from the
+                                           //! trace file, which is used for calculating the average
+                                           //! decoding latency per token
         request->target_length =
                 std::stoi(cached_len) + std::stoi(prompt_length) + std::stoi(target_length);
         request->current_length = std::stoi(cached_len);

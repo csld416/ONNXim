@@ -10,7 +10,6 @@
 
 typedef unsigned long long new_addr_type;
 
-unsigned ipoly_hash_function(new_addr_type higher_bits, unsigned index,
-                             unsigned bank_set_num);
+unsigned ipoly_hash_function(new_addr_type higher_bits, unsigned index, unsigned bank_set_num);
 
 #endif

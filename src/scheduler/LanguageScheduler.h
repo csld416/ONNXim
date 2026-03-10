@@ -6,26 +6,28 @@
 #include "../models/LanguageModel.h"
 
 struct LangRequest {
-  uint32_t request_id;
-  bool running;
-  bool gen_phase;
-  uint64_t request_time;
-  uint64_t start_time;
-  uint64_t finish_time;
-  uint32_t prompt_length;
-  uint32_t current_length;
-  uint32_t target_length;
-  std::vector<std::unique_ptr<Tensor>> key_cache;
-  std::vector<std::unique_ptr<Tensor>> value_cache;
+    uint32_t request_id;
+    bool running;
+    bool gen_phase;
+    uint64_t request_time;
+    uint64_t start_time;
+    uint64_t finish_time;
+    uint32_t prompt_length;
+    uint32_t current_length;
+    uint32_t target_length;
+    std::vector<std::unique_ptr<Tensor>> key_cache;
+    std::vector<std::unique_ptr<Tensor>> value_cache;
 };
 
 class LangScheduler {
-  public:
-    static std::unique_ptr<LangScheduler> create(std::string name, std::string path, 
-                                                  std::unique_ptr<LanguageModel> model,
-                                                  SimulationConfig config,
-                                                  json scheduler_config);
-    LangScheduler(std::string name, std::string path, 
+   public:
+    static std::unique_ptr<LangScheduler> create(std::string name,
+                                                 std::string path,
+                                                 std::unique_ptr<LanguageModel> model,
+                                                 SimulationConfig config,
+                                                 json scheduler_config);
+    LangScheduler(std::string name,
+                  std::string path,
                   std::unique_ptr<LanguageModel> model,
                   SimulationConfig config,
                   json scheduler_config);
@@ -35,7 +37,8 @@ class LangScheduler {
     virtual void cycle();
     virtual bool busy();
     virtual uint64_t get_kv_memory_size();
-  protected:
+
+   protected:
     SimulationConfig _config;
     json _scheduler_config;
     std::string _name;
@@ -53,11 +56,9 @@ class LangScheduler {
     uint32_t _hidden_size;
     uint32_t _cache_dim;
     uint32_t _max_seq_length;
-    uint32_t _max_batch_size; 
+    uint32_t _max_batch_size;
     bool _run_single_layer;
     bool _check_mem_size;
-
-
 
     std::vector<uint32_t> _max_dims;
 

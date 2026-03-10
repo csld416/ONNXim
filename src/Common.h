@@ -33,97 +33,97 @@ typedef uint64_t addr_type;
 typedef uint64_t cycle_type;
 
 typedef struct {
-  uint32_t id;
-  addr_type dram_address;
-  addr_type spad_address;
-  uint64_t size;
-  bool write;
-  bool request;
-  uint32_t core_id;
-  cycle_type start_cycle;
-  cycle_type dram_enter_cycle;
-  cycle_type dram_finish_cycle;
-  int buffer_id;
+    uint32_t id;
+    addr_type dram_address;
+    addr_type spad_address;
+    uint64_t size;
+    bool write;
+    bool request;
+    uint32_t core_id;
+    cycle_type start_cycle;
+    cycle_type dram_enter_cycle;
+    cycle_type dram_finish_cycle;
+    int buffer_id;
 } MemoryAccess;
 
 enum class Opcode {
-  MOVIN,
-  MOVOUT,
-  MOVOUT_POOL,
-  GEMM_PRELOAD,
-  GEMM,
-  GEMM_WRITE,
-  COMP,
-  IM2COL,
-  SOFTMAX,
-  LAYERNORM,
-  ADD,
-  MUL,
-  MAC,
-  DIV,
-  ADDTREE,
-  EXP,
-  GELU,
-  SWISH,
-  BAR
+    MOVIN,
+    MOVOUT,
+    MOVOUT_POOL,
+    GEMM_PRELOAD,
+    GEMM,
+    GEMM_WRITE,
+    COMP,
+    IM2COL,
+    SOFTMAX,
+    LAYERNORM,
+    ADD,
+    MUL,
+    MAC,
+    DIV,
+    ADDTREE,
+    EXP,
+    GELU,
+    SWISH,
+    BAR
 };
 struct Tile;
 typedef struct {
-  Opcode opcode;
-  cycle_type start_cycle;
-  cycle_type finish_cycle;
-  std::string id;
-  std::vector<std::string> dependent_ids;
-  std::string dest_id;
-  addr_type dest_addr;
-  uint32_t size;          // Used for sram allocation. Multiple of _config.dram_req_size
-  uint32_t compute_size;
-  std::vector<addr_type> src_addrs;
-  int spad_id;
-  int accum_spad_id;
-  uint32_t operand_id  = 0;
-  addr_type base_addr;
+    Opcode opcode;
+    cycle_type start_cycle;
+    cycle_type finish_cycle;
+    std::string id;
+    std::vector<std::string> dependent_ids;
+    std::string dest_id;
+    addr_type dest_addr;
+    uint32_t size;  // Used for sram allocation. Multiple of _config.dram_req_size
+    uint32_t compute_size;
+    std::vector<addr_type> src_addrs;
+    int spad_id;
+    int accum_spad_id;
+    uint32_t operand_id = 0;
+    addr_type base_addr;
 
-  uint32_t tile_m;
-  uint32_t tile_k;
-  uint32_t tile_n;
+    uint32_t tile_m;
+    uint32_t tile_k;
+    uint32_t tile_n;
 
-  bool src_from_accum = false;
-  bool zero_init = false;
-  bool last_inst = false;
-  Tile* my_tile;
-  std::string to_string();
+    bool src_from_accum = false;
+    bool zero_init = false;
+    bool last_inst = false;
+    Tile* my_tile;
+    std::string to_string();
 } Instruction;
 
 struct Tile {
-  enum class Status {
-    INITIALIZED,
-    RUNNING,
-    FINISH,
-    BAR,
-    EMPTY,
-  };
-  Status status = Status::EMPTY;
-  std::string optype;
-  uint32_t layer_id;
-  uint32_t fused_op_id; /* For fused operation */
-  uint32_t batch;
-  uint32_t Q;
-  uint32_t P;
-  uint32_t M;
-  uint32_t C;
-  uint32_t S;
-  uint32_t R;
+    enum class Status {
+        INITIALIZED,
+        RUNNING,
+        FINISH,
+        BAR,
+        EMPTY,
+    };
+    Status status = Status::EMPTY;
+    std::string optype;
+    uint32_t layer_id;
+    uint32_t fused_op_id; /* For fused operation */
+    uint32_t batch;
+    uint32_t Q;
+    uint32_t P;
+    uint32_t M;
+    uint32_t C;
+    uint32_t S;
+    uint32_t R;
 
-  TileStat stat;
-  std::deque<std::unique_ptr<Instruction>> instructions;
-  bool accum;
-  bool skip;
-  int spad_id;
-  int accum_spad_id;
-  int core_id = -1;
-  bool inst_finished = false;
-} ;
+    TileStat stat;
+    std::deque<std::unique_ptr<Instruction>> instructions;
+    bool accum;
+    bool skip;
+    int spad_id;
+    int accum_spad_id;
+    int core_id = -1;
+    bool inst_finished = false;
+};
 
 uint32_t generate_id();
 uint32_t generate_mem_access_id();
@@ -134,7 +134,7 @@ std::string name_gen(Args... args) {
     std::vector<std::string> strs = {args...};
     assert(!strs.empty());
     std::string ret = "";
-    for (auto &str : strs) {
+    for (auto& str : strs) {
         ret += str + ".";
     }
     ret.resize(ret.size() - 1);
@@ -142,6 +142,6 @@ std::string name_gen(Args... args) {
 }
 uint32_t ceil_div(uint32_t src, uint32_t div);
 
-std::vector<uint32_t> parse_dims(const std::string &str);
+std::vector<uint32_t> parse_dims(const std::string& str);
 
-std::string dims_to_string(const std::vector<uint32_t> &dims);
+std::string dims_to_string(const std::vector<uint32_t>& dims);

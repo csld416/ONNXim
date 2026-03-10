@@ -216,6 +216,9 @@ void Simulator::cycle() {
     }
     _icnt->print_stats();
     _dram->print_stat();
+    if(_language_mode){
+        _lang_scheduler->print_decode_summary();
+    }
 }
 
 void Simulator::register_model(std::unique_ptr<Model> model) {

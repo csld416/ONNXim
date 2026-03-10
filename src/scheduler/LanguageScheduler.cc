@@ -98,10 +98,8 @@ void LangScheduler::finish_model(uint32_t model_id) {
             _active_requests[req_id]->gen_phase = true;
             _active_requests[req_id]->current_length += promtp_len + 1;
             //! csld: this request just finished prefill phase, and now for decode mode.
-            /*
-            ! when the first token is generated, record the current cycle
-            */
             if (!_active_requests[req_id]->first_token_recorded) {
+                //! when the first token is generated, record the current cycle
                 _active_requests[req_id]->first_token_recorded = true;
                 _active_requests[req_id]->first_token_cycle = _cycle;
             }
@@ -134,15 +132,6 @@ void LangScheduler::finish_model(uint32_t model_id) {
                     tok_per_cycle);
             _decode_stats.push_back({req_id, decode_tokens, decode_cycles, tok_per_cycle});
             _active_requests.erase(req_id);
-            /*
-            ? this part is the original code.
-            _active_requests[req_id]->finish_time = _cycle;
-            spdlog::info(
-                    "Request {} completed in {} cycles",
-                    req_id,
-                    _active_requests[req_id]->finish_time - _active_requests[req_id]->start_time);
-            _active_requests.erase(req_id);
-            */
         }
     }
     _requests_in_model.erase(model_id);

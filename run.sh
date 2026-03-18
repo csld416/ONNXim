@@ -1,0 +1,1 @@
+./build/bin/Simulator --config ./configs/systolic_ws_128x128_c4_simple_noc_tpuv4.json --models_list example/language_models.json --mode language

@@ -1,0 +1,11 @@
+{
+  "num_hidden_layers": 126,
+  "hidden_size": 16384,
+  "intermediate_size": 53248,
+  "num_attention_heads": 128,
+  "num_kv_heads": 8,
+  "max_seq_length": 131072,
+  "pipeline_parallel_size": 1,
+  "vocab_size": 128256,
+  "rope_theta": 500000.0
+}
